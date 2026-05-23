@@ -1,14 +1,16 @@
+# imports
 import pygame
 import random
 import button
+import craft
 
 pygame.init()
 
-WIDTH, HEIGHT = 1000, 600
+WIDTH, HEIGHT = 1300, 1000
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("placeholder name")
 
-# load an image of the main menu cuz im too lazy to make one
+# load an images cuz im too lazy to make one
 mainMenuImg = pygame.transform.scale_by(pygame.image.load("images/mainmenu.png").convert_alpha(), 1.3)
 common = pygame.transform.scale_by(pygame.image.load("images/commonbutton.png").convert_alpha(), 0.42)
 unusual = pygame.transform.scale_by(pygame.image.load("images/unusual.png").convert_alpha(), 0.42)
@@ -19,17 +21,6 @@ mythic = pygame.transform.scale_by(pygame.image.load("images/mythic.png").conver
 ultra = pygame.transform.scale_by(pygame.image.load("images/ultra.png").convert_alpha(), 0.42)
 super = pygame.transform.scale_by(pygame.image.load("images/super.png").convert_alpha(), 0.42)
 eternal = pygame.transform.scale_by(pygame.image.load("images/eternal.png").convert_alpha(), 0.42)
-
-#player variables
-commonPetals = 1
-unusualPetals = 0
-rarePetals = 0
-epicPetals = 0
-legendaryPetals = 0
-mythicPetals = 0
-ultraPetals = 0
-superPetals = 0
-eternalPetals = 0
 
 #create buttons
 commonButton = button.Button(28, 361, common)
@@ -42,8 +33,15 @@ ultraButton = button.Button(430, 361, ultra)
 superButton = button.Button(496, 361, super)
 eternalButton = button.Button(562, 361, eternal)
 
+#stuffs for text
+
+#define font sizes
+size_petals = 10
+size_menu = 30
+
 #define fonts
-FONT = pygame.font.SysFont("comicsans", 10)
+FONT_petals = pygame.font.SysFont("comicsans", size_petals)
+FONT_menu = pygame.font.SysFont("comicsans", size_menu)
 
 #define colours
 TEXT_WHITE = (255, 255, 255)
@@ -57,6 +55,7 @@ def draw_text(text, font, text_col , x, y):
 #game loop
 def main():
     run = True
+    #menu states
     commonMenuOpen = False
     unusualMenuOpen = False
     rareMenuOpen = False
@@ -66,29 +65,44 @@ def main():
     ultraMenuOpen = False
     superMenuOpen = False
     eternalMenuOpen = False
-
+    #petal amounts
+    commonPetals = 100
+    unusualPetals = 0
+    rarePetals = 0
+    epicPetals = 0
+    legendaryPetals = 0
+    mythicPetals = 0
+    ultraPetals = 0
+    superPetals = 0
+    eternalPetals = 0    
     while run:
 
         screen.fill((255, 255, 255))
 
         screen.blit(mainMenuImg, (-917, -380))
-        #draw buttons
+        #buttons
         if commonButton.draw(screen):
-            if commonMenuOpen == True:
-                commonMenuOpen = False
-                print("common menu closed")
+            if pygame.key.get_pressed()[pygame.K_LSHIFT] == 1 or pygame.key.get_pressed()[pygame.K_RSHIFT] == 1:
+                craft.Craft(commonPetals, 0)
+                unusualPetals += craft.Craft(commonPetals, 0)[0]
+                commonPetals = craft.Craft(commonPetals, 0)[1]
+                print("crafting common...")
             else:
-                commonMenuOpen = True
-                unusualMenuOpen = False
-                rareMenuOpen = False
-                epicMenuOpen = False
-                legendaryMenuOpen = False
-                mythicMenuOpen = False
-                ultraMenuOpen = False
-                superMenuOpen = False
-                eternalMenuOpen = False
-                print("common menu opened")
-        if unusualButton.draw(screen):
+                if commonMenuOpen == True:
+                    commonMenuOpen = False
+                    print("common menu closed")
+                else:
+                    commonMenuOpen = True
+                    unusualMenuOpen = False
+                    rareMenuOpen = False
+                    epicMenuOpen = False
+                    legendaryMenuOpen = False
+                    mythicMenuOpen = False
+                    ultraMenuOpen = False
+                    superMenuOpen = False
+                    eternalMenuOpen = False
+                    print("common menu opened")
+        if unusualButton.draw(screen) == "menu" and unusual >= 1:
             if unusualMenuOpen == True:
                 unusualMenuOpen = False
                 print("unusual menu closed")
@@ -102,21 +116,27 @@ def main():
                 ultraMenuOpen = False
                 superMenuOpen = False
                 eternalMenuOpen = False
-        if rareButton.draw(screen):
-            if rareMenuOpen == True:
-                rareMenuOpen = False
-                print("rare menu closed")
-            else:
-                rareMenuOpen = True
-                commonMenuOpen = False
-                unusualMenuOpen = False
-                epicMenuOpen = False
-                legendaryMenuOpen = False
-                mythicMenuOpen = False
-                ultraMenuOpen = False
-                superMenuOpen = False
-                eternalMenuOpen = False
-                print("rare menu opened")
+        elif unusualButton.draw(screen) == "craft" and unusual >= 5:
+            craft.Craft(unusualPetals, 1)
+            rarePetals += craft.Craft(unusualPetals, 1)[0]
+            unusualPetals = craft.Craft(unusualPetals, 1)[1]
+            print("crafting unusual...")
+        if rareButton.draw(screen) == "menu" and rare >= 1:
+            if rare >=1:
+                if rareMenuOpen == True:
+                    rareMenuOpen = False
+                    print("rare menu closed")
+                else:
+                    rareMenuOpen = True
+                    commonMenuOpen = False
+                    unusualMenuOpen = False
+                    epicMenuOpen = False
+                    legendaryMenuOpen = False
+                    mythicMenuOpen = False
+                    ultraMenuOpen = False
+                    superMenuOpen = False
+                    eternalMenuOpen = False
+                    print("rare menu opened")
         if epicButton.draw(screen):
             if epicMenuOpen == True:
                 epicMenuOpen = False
@@ -208,16 +228,28 @@ def main():
                 superMenuOpen = False
                 print("eternal menu opened")
         #draw text
-        draw_text(f"x{commonPetals}", FONT, TEXT_BLACK, 70, 361)
-        draw_text(f"x{unusualPetals}", FONT, TEXT_BLACK, 135, 361)
-        draw_text(f"x{rarePetals}", FONT, TEXT_WHITE, 200, 361)
-        draw_text(f"x{epicPetals}", FONT, TEXT_WHITE, 270, 361)
-        draw_text(f"x{legendaryPetals}", FONT, TEXT_WHITE, 335, 361)
-        draw_text(f"x{mythicPetals}", FONT, TEXT_BLACK, 400, 361)
-        draw_text(f"x{ultraPetals}", FONT, TEXT_WHITE, 469, 361)
-        draw_text(f"x{superPetals}", FONT, TEXT_BLACK, 534, 361)
-        draw_text(f"x{eternalPetals}", FONT, TEXT_BLACK, 599, 361)
-
+        draw_text(f"x{commonPetals}", FONT_petals, TEXT_BLACK, 70, 361)
+        draw_text(f"x{unusualPetals}", FONT_petals, TEXT_BLACK, 135, 361)
+        draw_text(f"x{rarePetals}", FONT_petals, TEXT_WHITE, 200, 361)
+        draw_text(f"x{epicPetals}", FONT_petals, TEXT_WHITE, 270, 361)
+        draw_text(f"x{legendaryPetals}", FONT_petals, TEXT_WHITE, 335, 361)
+        draw_text(f"x{mythicPetals}", FONT_petals, TEXT_BLACK, 400, 361)
+        draw_text(f"x{ultraPetals}", FONT_petals, TEXT_WHITE, 469, 361)
+        draw_text(f"x{superPetals}", FONT_petals, TEXT_BLACK, 534, 361)
+        draw_text(f"x{eternalPetals}", FONT_petals, TEXT_BLACK, 599, 361)
+        #draw menus
+        if commonMenuOpen == True:
+            pygame.draw.rect(screen, (113, 229, 107), (28, 442, 500, 300))
+            draw_text("common", FONT_menu, TEXT_BLACK, 40, 450)
+        if unusualMenuOpen == True:
+            pygame.draw.rect(screen, (221, 220, 95), (28, 442, 500, 300))
+            draw_text("unusual", FONT_menu, TEXT_BLACK, 40, 450)
+        if rareMenuOpen == True:
+            pygame.draw.rect(screen, (70, 95, 206), (28, 442, 500, 300))
+            draw_text("rare", FONT_menu, TEXT_WHITE, 40, 450)
+        if epicMenuOpen == True:
+            pygame.draw.rect(screen, (134, 33, 223), (28, 442, 500, 300))
+            draw_text("epic", FONT_menu, TEXT_WHITE, 40, 450)
         # event handler
         for event in pygame.event.get():
             # quit game
