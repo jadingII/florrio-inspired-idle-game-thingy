@@ -1,6 +1,7 @@
 # imports
 import pygame
 import random
+import time
 import button
 import craft
 
@@ -21,6 +22,7 @@ mythic = pygame.transform.scale_by(pygame.image.load("images/mythic.png").conver
 ultra = pygame.transform.scale_by(pygame.image.load("images/ultra.png").convert_alpha(), 0.42)
 super = pygame.transform.scale_by(pygame.image.load("images/super.png").convert_alpha(), 0.42)
 eternal = pygame.transform.scale_by(pygame.image.load("images/eternal.png").convert_alpha(), 0.42)
+upgradeButton = pygame.transform.scale_by(pygame.image.load("images/button.png").convert_alpha(), .7)
 
 #create buttons
 commonButton = button.Button(28, 361, common)
@@ -32,6 +34,8 @@ mythicButton = button.Button(360, 361, mythic)
 ultraButton = button.Button(430, 361, ultra)
 superButton = button.Button(496, 361, super)
 eternalButton = button.Button(562, 361, eternal)
+#sorry about the negative optimisation
+commonMenuButton1 = button.Button(520, -280, upgradeButton)
 
 #stuffs for text
 
@@ -43,6 +47,8 @@ size_menu = 30
 FONT_petals = pygame.font.SysFont("comicsans", size_petals)
 FONT_menuHeader = pygame.font.SysFont("comicsans", size_menu)
 FONT_menuText = pygame.font.SysFont("comicsans", size_menu - 10)
+FONT_upgradeH = pygame.font.SysFont("comicsans", 14)
+FONT_upgradeD = pygame.font.SysFont("comicsans", 10)
 
 #define colours
 TEXT_WHITE = (255, 255, 255)
@@ -67,15 +73,22 @@ def main():
     superMenuOpen = False
     eternalMenuOpen = False
     #petal amounts
-    commonPetals = 0
-    unusualPetals = 0
-    rarePetals = 0
-    epicPetals = 0
-    legendaryPetals = 0
-    mythicPetals = 0
-    ultraPetals = 0
-    superPetals = 0
-    eternalPetals = 0    
+    commonPetals = 1
+    unusualPetals = 1
+    rarePetals = 1
+    epicPetals = 1
+    legendaryPetals = 1
+    mythicPetals = 1
+    ultraPetals = 1
+    superPetals = 1
+    eternalPetals = 1    
+    #otehr variables
+    sec=0
+    then=float(time.perf_counter())
+    CmultT = 1
+    CmultUn = 1
+    #upgrades
+    CU1 = 0
     while run:
 
         screen.fill((255, 255, 255))
@@ -281,48 +294,65 @@ def main():
         draw_text(f"x{eternalPetals}", FONT_petals, TEXT_BLACK, 558, 361)
         #draw menus
         if commonMenuOpen == True:
-            pygame.draw.rect(screen, (113, 229, 107), (28, 442, 500, 300))
-            draw_text("common", FONT_menuHeader, TEXT_BLACK, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 40, 500)
+            pygame.draw.rect(screen, (113, 229, 107), (663, 0, 700, 400))
+            draw_text("common", FONT_menuHeader, TEXT_BLACK, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
+            draw_text("CU1 - start!", FONT_upgradeH, TEXT_BLACK, 1120, 50)
+            draw_text("generate one common petal", FONT_upgradeD, TEXT_BLACK, 1120, 65)
+            draw_text("per second", FONT_upgradeD, TEXT_BLACK, 1120, 80)
+            draw_text("cost: FREE!", FONT_upgradeD, TEXT_BLACK, 1120, 95)
+            if commonMenuButton1.draw(screen):
+                CU1 = 1
         if unusualMenuOpen == True:
-            pygame.draw.rect(screen, (221, 220, 95), (28, 442, 500, 300))
-            draw_text("unusual", FONT_menuHeader, TEXT_BLACK, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 40, 500)
+            pygame.draw.rect(screen, (221, 220, 95), (663, 0, 700, 400))
+            draw_text("unusual", FONT_menuHeader, TEXT_BLACK, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
+            draw_text(f"you have {unusualPetals} unusual petals, which multiply common petal generation by {CmultUn}", FONT_upgradeH, TEXT_BLACK, 670, 100)
         if rareMenuOpen == True:
-            pygame.draw.rect(screen, (70, 95, 206), (28, 442, 500, 300))
-            draw_text("rare", FONT_menuHeader, TEXT_WHITE, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 40, 500)
+            pygame.draw.rect(screen, (70, 95, 206), (663, 0, 700, 400))
+            draw_text("rare", FONT_menuHeader, TEXT_WHITE, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 670, 50)
         if epicMenuOpen == True:
-            pygame.draw.rect(screen, (134, 33, 223), (28, 442, 500, 300))
-            draw_text("epic", FONT_menuHeader, TEXT_WHITE, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 40, 500)
+            pygame.draw.rect(screen, (134, 33, 223), (663, 0, 700, 400))
+            draw_text("epic", FONT_menuHeader, TEXT_WHITE, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 670, 50)
         if legendaryMenuOpen == True:
-            pygame.draw.rect(screen, (222, 32, 32), (28, 442, 500, 300))
-            draw_text("legendary", FONT_menuHeader, TEXT_WHITE, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 40, 500)
+            pygame.draw.rect(screen, (222, 32, 32), (663, 0, 700, 400))
+            draw_text("legendary", FONT_menuHeader, TEXT_WHITE, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 670, 50)
         if mythicMenuOpen == True:
-            pygame.draw.rect(screen, (33, 219, 223), (28, 442, 500, 300))
-            draw_text("mythic", FONT_menuHeader, TEXT_BLACK, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 40, 500)
+            pygame.draw.rect(screen, (33, 219, 223), (663, 0, 700, 400))
+            draw_text("mythic", FONT_menuHeader, TEXT_BLACK, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
         if ultraMenuOpen == True:
-            pygame.draw.rect(screen, (254, 43, 117), (28, 442, 500, 300))
-            draw_text("ultra", FONT_menuHeader, TEXT_BLACK, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 40, 500)
+            pygame.draw.rect(screen, (254, 43, 117), (663, 0, 700, 400))
+            draw_text("ultra", FONT_menuHeader, TEXT_BLACK, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
         if superMenuOpen == True:
-            pygame.draw.rect(screen, (45, 255, 162), (28, 442, 500, 300))
-            draw_text("super", FONT_menuHeader, TEXT_BLACK, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 40, 500)
+            pygame.draw.rect(screen, (45, 255, 162), (663, 0, 700, 400))
+            draw_text("super", FONT_menuHeader, TEXT_BLACK, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
         if eternalMenuOpen == True:
-            pygame.draw.rect(screen, (238, 238, 238), (28, 442, 500, 300))
-            draw_text("eternal", FONT_menuHeader, TEXT_WHITE, 40, 450)
-            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 40, 500)
+            pygame.draw.rect(screen, (238, 238, 238), (663, 0, 700, 400))
+            draw_text("eternal", FONT_menuHeader, TEXT_WHITE, 670, 10)
+            draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 670, 50)
+        #per second stuffs
+        now = float(time.perf_counter())
+        sec += now-then
+        if sec >= 1:
+            if CU1 == 1:
+                commonPetals += int(sec)*CmultT
+            sec -= int(sec)
+        then=now
         # event handler
         for event in pygame.event.get():
             # quit game
             if event.type == pygame.QUIT:
                 run = False
                 break
-
+        #everything else that needs to be updated
+        CmultUn = 1 + unusualPetals
+        CmultT = CmultUn
         pygame.display.update()
     pygame.quit()
 
