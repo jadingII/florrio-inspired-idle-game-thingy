@@ -67,7 +67,7 @@ def main():
     superMenuOpen = False
     eternalMenuOpen = False
     #petal amounts
-    commonPetals = 1
+    commonPetals = 0
     unusualPetals = 0
     rarePetals = 0
     epicPetals = 0
