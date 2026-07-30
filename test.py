@@ -1,12 +1,10 @@
-import time
-a=0
-b=0
-last = time.perf_counter()
-while True:
-    this = time.perf_counter()
-    a += this-last
-    if a >=1:
-        a -= 1
-        b += 1
-        print(b)
-    last = this
+import math
+
+
+def scientific_notation(a):
+    if a < 10000:
+        output = a
+    else:
+        output = f"{int(a//10**(math.floor(math.log10(a))))}.{int(a//10**(math.floor(math.log10(a))-2))-100*int(a//10**(math.floor(math.log10(a))))}e{math.floor(math.log10(a))}"
+    return output
+print(scientific_notation(int(input(""))))

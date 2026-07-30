@@ -1,9 +1,10 @@
-# imports
+#imports
 import pygame
 import random
 import time
 import button
 import craft
+from math import floor, isqrt, log10
 
 pygame.init()
 
@@ -11,7 +12,7 @@ WIDTH, HEIGHT = 1300, 1000
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("placeholder name")
 
-# load an images cuz im too lazy to make one
+#load an images bc im too lazy to make it myself
 mainMenuImg = pygame.transform.scale_by(pygame.image.load("images/mainmenu.png").convert_alpha(), 1.3)
 common = pygame.transform.scale_by(pygame.image.load("images/commonbutton.png").convert_alpha(), 0.42)
 unusual = pygame.transform.scale_by(pygame.image.load("images/unusual.png").convert_alpha(), 0.42)
@@ -22,7 +23,7 @@ mythic = pygame.transform.scale_by(pygame.image.load("images/mythic.png").conver
 ultra = pygame.transform.scale_by(pygame.image.load("images/ultra.png").convert_alpha(), 0.42)
 super = pygame.transform.scale_by(pygame.image.load("images/super.png").convert_alpha(), 0.42)
 eternal = pygame.transform.scale_by(pygame.image.load("images/eternal.png").convert_alpha(), 0.42)
-upgradeButton = pygame.transform.scale_by(pygame.image.load("images/button.png").convert_alpha(), .7)
+upgradeButton = pygame.transform.scale_by(pygame.image.load("images/button.png").convert_alpha(), .4)
 
 #create buttons
 commonButton = button.Button(28, 361, common)
@@ -35,7 +36,10 @@ ultraButton = button.Button(430, 361, ultra)
 superButton = button.Button(496, 361, super)
 eternalButton = button.Button(562, 361, eternal)
 #sorry about the negative optimisation
-commonMenuButton1 = button.Button(520, -280, upgradeButton)
+commonMenuButton1 = button.Button(700, 100, upgradeButton)
+commonMenuButton2 = button.Button(950, 100, upgradeButton)
+unusualMenuButton1 = button.Button(700, 140, upgradeButton)
+CommonAutoB = button.Button(200, 500, upgradeButton)
 
 #stuffs for text
 
@@ -74,7 +78,7 @@ def main():
     eternalMenuOpen = False
     #petal amounts
     commonPetals = 1
-    unusualPetals = 1
+    unusualPetals = 2000
     rarePetals = 1
     epicPetals = 1
     legendaryPetals = 1
@@ -87,8 +91,12 @@ def main():
     then=float(time.perf_counter())
     CmultT = 1
     CmultUn = 1
+    AutomationUnl = False
     #upgrades
     CU1 = 0
+    CU2 = 0
+    CommonAutoUnl = False
+    CommonAuto = False
     while run:
 
         screen.fill((255, 255, 255))
@@ -282,32 +290,76 @@ def main():
                 ultraMenuOpen = False
                 superMenuOpen = False
                 print("eternal menu opened")
-        #draw text
-        draw_text(f"x{commonPetals}", FONT_petals, TEXT_BLACK, 29, 361)
-        draw_text(f"x{unusualPetals}", FONT_petals, TEXT_BLACK, 94, 361)
-        draw_text(f"x{rarePetals}", FONT_petals, TEXT_WHITE, 159, 361)
-        draw_text(f"x{epicPetals}", FONT_petals, TEXT_WHITE, 229, 361)
-        draw_text(f"x{legendaryPetals}", FONT_petals, TEXT_WHITE, 294, 361)
-        draw_text(f"x{mythicPetals}", FONT_petals, TEXT_BLACK, 359, 361)
-        draw_text(f"x{ultraPetals}", FONT_petals, TEXT_WHITE, 428, 361)
-        draw_text(f"x{superPetals}", FONT_petals, TEXT_BLACK, 493, 361)
-        draw_text(f"x{eternalPetals}", FONT_petals, TEXT_BLACK, 558, 361)
+        #draw petal amounts text
+        if commonPetals >= 10000:
+            draw_text(f"x{int(commonPetals//10**(floor(log10(commonPetals))))}.{int(commonPetals//10**(floor(log10(commonPetals))-2))-100*int(commonPetals//10**(floor(log10(commonPetals))))}e{floor(log10(commonPetals))}", FONT_petals, TEXT_BLACK, 29, 361)
+        else:
+            draw_text(f"x{commonPetals}", FONT_petals, TEXT_BLACK, 29, 361)
+        if unusualPetals >= 10000:
+            draw_text(f"x{int(unusualPetals//10**(floor(log10(unusualPetals))))}.{int(unusualPetals//10**(floor(log10(unusualPetals))-2))-100*int(unusualPetals//10**(floor(log10(unusualPetals))))}e{floor(log10(unusualPetals))}", FONT_petals, TEXT_BLACK, 94, 361)
+        else:
+            draw_text(f"x{unusualPetals}", FONT_petals, TEXT_BLACK, 94, 361)
+        if rarePetals >= 10000:
+            draw_text(f"x{int(rarePetals//10**(floor(log10(rarePetals))))}.{int(rarePetals//10**(floor(log10(rarePetals))-2))-100*int(rarePetals//10**(floor(log10(rarePetals))))}e{floor(log10(rarePetals))}", FONT_petals, TEXT_WHITE, 159, 361)
+        else:
+            draw_text(f"x{rarePetals}", FONT_petals, TEXT_WHITE, 159, 361)
+        if epicPetals >= 10000:
+            draw_text(f"x{int(epicPetals//10**(floor(log10(epicPetals))))}.{int(epicPetals//10**(floor(log10(epicPetals))-2))-100*int(epicPetals//10**(floor(log10(epicPetals))))}e{floor(log10(epicPetals))}", FONT_petals, TEXT_WHITE, 229, 361)
+        else:
+            draw_text(f"x{epicPetals}", FONT_petals, TEXT_WHITE, 229, 361)
+        if legendaryPetals >= 10000:
+            draw_text(f"x{int(legendaryPetals//10**(floor(log10(legendaryPetals))))}.{int(legendaryPetals//10**(floor(log10(legendaryPetals))-2))-100*int(legendaryPetals//10**(floor(log10(legendaryPetals))))}e{floor(log10(legendaryPetals))}", FONT_petals, TEXT_WHITE, 294, 361)
+        else:
+            draw_text(f"x{legendaryPetals}", FONT_petals, TEXT_WHITE, 294, 361)
+        if mythicPetals >= 10000:
+            draw_text(f"x{int(mythicPetals//10**(floor(log10(mythicPetals))))}.{int(mythicPetals//10**(floor(log10(mythicPetals))-2))-100*int(mythicPetals//10**(floor(log10(mythicPetals))))}e{floor(log10(mythicPetals))}", FONT_petals, TEXT_BLACK, 359, 361)
+        else:
+            draw_text(f"x{mythicPetals}", FONT_petals, TEXT_BLACK, 359, 361)
+        if ultraPetals >= 10000:
+            draw_text(f"x{int(ultraPetals//10**(floor(log10(ultraPetals))))}.{int(ultraPetals//10**(floor(log10(ultraPetals))-2))-100*int(ultraPetals//10**(floor(log10(ultraPetals))))}e{floor(log10(ultraPetals))}", FONT_petals, TEXT_WHITE, 428, 361)
+        else:
+            draw_text(f"x{ultraPetals}", FONT_petals, TEXT_WHITE, 428, 361)
+        if superPetals >= 10000:
+            draw_text(f"x{int(superPetals//10**(floor(log10(superPetals))))}.{int(superPetals//10**(floor(log10(superPetals))-2))-100*int(superPetals//10**(floor(log10(superPetals))))}e{floor(log10(superPetals))}", FONT_petals, TEXT_BLACK, 493, 361)
+        else:
+            draw_text(f"x{superPetals}", FONT_petals, TEXT_BLACK, 493, 361)
+        if eternalPetals >= 10000:
+            draw_text(f"x{int(eternalPetals//10**(floor(log10(eternalPetals))))}.{int(eternalPetals//10**(floor(log10(eternalPetals))-2))-100*int(eternalPetals//10**(floor(log10(eternalPetals))))}e{floor(log10(eternalPetals))}", FONT_petals, TEXT_BLACK, 558, 361)
+        else:
+            draw_text(f"x{eternalPetals}", FONT_petals, TEXT_BLACK, 558, 361)
         #draw menus
         if commonMenuOpen == True:
             pygame.draw.rect(screen, (113, 229, 107), (663, 0, 700, 400))
             draw_text("common", FONT_menuHeader, TEXT_BLACK, 670, 10)
             draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
-            draw_text("CU1 - start!", FONT_upgradeH, TEXT_BLACK, 1120, 50)
-            draw_text("generate one common petal", FONT_upgradeD, TEXT_BLACK, 1120, 65)
-            draw_text("per second", FONT_upgradeD, TEXT_BLACK, 1120, 80)
-            draw_text("cost: FREE!", FONT_upgradeD, TEXT_BLACK, 1120, 95)
+            draw_text("CU1 - start!", FONT_upgradeH, TEXT_BLACK, 720, 110)
+            draw_text("generate one common petal per second", FONT_upgradeD, TEXT_BLACK, 710, 140)
+            draw_text("cost: FREE!", FONT_upgradeD, TEXT_BLACK, 710, 155)
             if commonMenuButton1.draw(screen):
                 CU1 = 1
+            draw_text("CU2 - unusual booster", FONT_upgradeH, TEXT_BLACK, 970, 110)
+            draw_text("increase boost to common petal", FONT_upgradeD, TEXT_BLACK, 960, 140)
+            draw_text("generation from unusual petals", FONT_upgradeD, TEXT_BLACK, 960, 155)
+            draw_text("cost: 100 common petals", FONT_upgradeD, TEXT_BLACK, 960, 170)
+            if commonMenuButton2.draw(screen) and commonPetals >= 100 and CU2 == 0:
+                CU2 = 1
+                commonPetals -= 100
         if unusualMenuOpen == True:
             pygame.draw.rect(screen, (221, 220, 95), (663, 0, 700, 400))
             draw_text("unusual", FONT_menuHeader, TEXT_BLACK, 670, 10)
             draw_text("shift click to craft", FONT_menuText, TEXT_BLACK, 670, 50)
-            draw_text(f"you have {unusualPetals} unusual petals, which multiply common petal generation by {CmultUn}", FONT_upgradeH, TEXT_BLACK, 670, 100)
+            if unusualPetals < 1000:
+                draw_text(f"you have {unusualPetals} unusual petals, which multiply common petal generation by {CmultUn}", FONT_upgradeH, TEXT_BLACK, 670, 100)
+            else: 
+                draw_text(f"you have {int(unusualPetals//10**(floor(log10(unusualPetals))))}.{int(unusualPetals//10**(floor(log10(unusualPetals))-2))-100*int(unusualPetals//10**(floor(log10(unusualPetals))))}e{floor(log10(unusualPetals))} unusual petals, which multiply common petal generation by {int(CmultUn//10**(floor(log10(CmultUn))))}.{int(CmultUn//10**(floor(log10(CmultUn))-2))-100*int(CmultUn//10**(floor(log10(CmultUn))))}e{floor(log10(CmultUn))}", FONT_upgradeH, TEXT_BLACK, 670, 100)
+            if unusualMenuButton1.draw(screen) and unusualPetals >= 1000 and not CommonAuto:
+                CommonAutoUnl = True
+                unusualPetals -= 1000
+                AutomationUnl = True
+            draw_text("CU2 - Autocraft Commons", FONT_upgradeH, TEXT_BLACK, 720, 150)
+            draw_text("increase boost to common petal", FONT_upgradeD, TEXT_BLACK, 720, 190)
+            draw_text("generation from unusual petals", FONT_upgradeD, TEXT_BLACK, 720, 205)
+            draw_text("cost: 1000 common petals", FONT_upgradeD, TEXT_BLACK, 720, 220)
         if rareMenuOpen == True:
             pygame.draw.rect(screen, (70, 95, 206), (663, 0, 700, 400))
             draw_text("rare", FONT_menuHeader, TEXT_WHITE, 670, 10)
@@ -336,6 +388,21 @@ def main():
             pygame.draw.rect(screen, (238, 238, 238), (663, 0, 700, 400))
             draw_text("eternal", FONT_menuHeader, TEXT_WHITE, 670, 10)
             draw_text("shift click to craft", FONT_menuText, TEXT_WHITE, 670, 50)
+        if AutomationUnl:
+            draw_text("Automation", FONT_menuHeader, TEXT_BLACK, 200, 450)
+            if CommonAutoUnl:
+                draw_text("Auto Craft Commons", FONT_upgradeH, TEXT_BLACK, 210, 510)
+                if CommonAutoB.draw(screen):
+                    if CommonAuto == False:
+                        CommonAuto = True
+                        print("common autocraft on")
+                    else:
+                        CommonAuto = False
+                        print("common autocraft off")
+                if not CommonAuto:
+                    draw_text("OFF", FONT_upgradeD, TEXT_BLACK, 210, 525)
+                else:
+                    draw_text("ON", FONT_upgradeD, TEXT_BLACK, 210, 525)
         #per second stuffs
         now = float(time.perf_counter())
         sec += now-then
@@ -344,15 +411,22 @@ def main():
                 commonPetals += int(sec)*CmultT
             sec -= int(sec)
         then=now
-        # event handler
+        #event handler
         for event in pygame.event.get():
             # quit game
             if event.type == pygame.QUIT:
                 run = False
                 break
         #everything else that needs to be updated
-        CmultUn = 1 + unusualPetals
+        if CU2 == 1:
+            CmultUn = int((1+3*int((unusualPetals//2)**0.9))*isqrt(rarePetals))
+        else:
+            CmultUn = int((1+int((unusualPetals//2)**.9))*isqrt(rarePetals))
         CmultT = CmultUn
+        if CommonAuto == True:
+            craft.Craft(commonPetals, 0)
+            unusualPetals += craft.Craft(commonPetals, 0)[0]
+            commonPetals = craft.Craft(commonPetals, 0)[1]
         pygame.display.update()
     pygame.quit()
 
